@@ -29,3 +29,28 @@ if __name__ == "__main__":
 
     print(graph)
     print("Weight between A and B:", graph.get_weight('A', 'B'))
+
+
+    #Path graph
+    straight_path_graph = Graph()
+    for i in range(14):
+        straight_path_graph.add_edge(str(i), str(i+1), 1)
+    print(straight_path_graph)
+    
+    #Tree
+    tree_graph = Graph()
+    for i in range(1, 15):
+        tree_graph.add_edge(str(i // 2), str(i), 1)
+    print(tree_graph)
+
+    #Complex Graph
+    complex_graph = Graph()
+    for i in range(29):
+        complex_graph.add_edge(str(i), str(i+1), 1)
+    complex_graph.add_edge('0', '29', 1)
+    complex_graph.add_edge('5', '10', 1)
+    complex_graph.add_edge('20', '25', 1)
+    print(complex_graph)
+
+
+
