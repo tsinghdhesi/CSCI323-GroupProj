@@ -17,40 +17,29 @@ class Graph:
 
     def __str__(self):
         return f"Nodes: {self.nodes}\nEdges: {self.edges}"
+        
+def generate_random_graph(num_nodes):
+    graph = Graph()
+    for i in range(num_nodes):
+        for j in range(i + 1, num_nodes):
+            weight = random.randint(1, 20)  # Random weight between 1 and 20
+            graph.add_edge(str(i), str(j), weight)
+    return graph
 
+# Function to generate a complex graph with cycles
+def generate_complex_graph(num_nodes):
+    graph = Graph()
+    for i in range(num_nodes):
+        for j in range(i + 1, min(i + 4, num_nodes)):
+            weight = random.randint(1, 20)  # Random weight between 1 and 20
+            graph.add_edge(str(i), str(j), weight)
+    return graph
 
 # Example usage:
 if __name__ == "__main__":
-    graph = Graph()
-    graph.add_edge('A', 'B', 5)
-    graph.add_edge('B', 'C', 3)
-    graph.add_edge('C', 'D', 7)
-    graph.add_edge('D', 'A', 2)
-
-    print(graph)
-    print("Weight between A and B:", graph.get_weight('A', 'B'))
-
-
-    #Path graph
-    straight_path_graph = Graph()
-    for i in range(14):
-        straight_path_graph.add_edge(str(i), str(i+1), 1)
-    print(straight_path_graph)
-    
-    #Tree
-    tree_graph = Graph()
-    for i in range(1, 15):
-        tree_graph.add_edge(str(i // 2), str(i), 1)
-    print(tree_graph)
-
-    #Complex Graph
-    complex_graph = Graph()
-    for i in range(29):
-        complex_graph.add_edge(str(i), str(i+1), 1)
-    complex_graph.add_edge('0', '29', 1)
-    complex_graph.add_edge('5', '10', 1)
-    complex_graph.add_edge('20', '25', 1)
-    print(complex_graph)
-
+    # Generate graphs
+    graph_5_nodes = generate_random_graph(5)
+    graph_15_nodes = generate_random_graph(15)
+    graph_30_nodes = generate_complex_graph(30)
 
 
