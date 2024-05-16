@@ -9,14 +9,11 @@ class Graph:
     def add_edge(self, node1, node2, weight):
         self.add_node(node1)
         self.add_node(node2)
-        self.edges[(node1, node2)] = weight
-        self.edges[(node2, node1)] = weight
+        self.edges.setdefault(node1, {})[node2] = weight
+        self.edges.setdefault(node2, {})[node1] = weight
 
     def get_weight(self, node1, node2):
-        return self.edges.get((node1, node2), float('inf'))
-
-    def __str__(self):
-        return f"Nodes: {self.nodes}\nEdges: {self.edges}"
+        return self.edges.get(node1, {}).get(node2, float('inf'))
         
 def generate_random_graph(num_nodes):
     graph = Graph()
