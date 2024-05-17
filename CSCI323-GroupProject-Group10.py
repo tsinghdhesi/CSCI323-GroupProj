@@ -15,22 +15,13 @@ class Graph:
     def get_weight(self, node1, node2):
         return self.edges.get(node1, {}).get(node2, float('inf'))
         
-def generate_random_graph(num_nodes):
-    graph = Graph()
-    for i in range(num_nodes):
-        for j in range(i + 1, num_nodes):
-            weight = random.randint(1, 20)  # Random weight between 1 and 20
-            graph.add_edge(str(i), str(j), weight)
-    return graph
-
-# Function to generate a complex graph with cycles
-def generate_complex_graph(num_nodes):
-    graph = Graph()
-    for i in range(num_nodes):
-        for j in range(i + 1, min(i + 4, num_nodes)):
-            weight = random.randint(1, 20)  # Random weight between 1 and 20
-            graph.add_edge(str(i), str(j), weight)
-    return graph
+    def construct_complete_graph(self, num_nodes, min_weight=1, max_weight=20):
+        # Add nodes to the graph
+        for i in range(num_nodes):
+            for j in range(i + 1, num_nodes):
+                # Generate a random weight between min_weight and max_weight for each edge
+                weight = random.randint(min_weight, max_weight)
+                self.add_edge(str(i), str(j), weight)
 
 # Example usage:
 if __name__ == "__main__":
