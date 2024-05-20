@@ -1,4 +1,6 @@
 import random
+import heapq
+
 
 class Graph:
     def __init__(self):
@@ -25,7 +27,6 @@ class Graph:
         # Initialize distances to all nodes as infinity
         distances = {node: float('inf') for node in self.nodes}
         distances[source] = 0
-
         # Priority queue to store nodes with their current distances
         priority_queue = [(0, source)]
         # Previous node dictionary to reconstruct the path
@@ -57,7 +58,7 @@ class Graph:
 
         return path
     
-    def construct_complete_graph(self, num_nodes, min_weight=1, max_weight=20):
+    def generate_random_graph(self, num_nodes, min_weight=1, max_weight=20):
         # Add nodes to the graph
         for i in range(num_nodes):
             for j in range(i + 1, num_nodes):
@@ -133,13 +134,115 @@ class Graph:
             i = next_node
 
         return path
-        
+
+    # ethan's code start --------------------------------------------------------------------------------
+
+    def succ(self, path, explored):
+        # return successors (neighbors)
+        # neighbours -> array of successors
+        curr_node = path[-1][0]
+        neighbors = []
+        for node, weight in self.edges[curr_node].items():
+            not_explored = True
+            # if node is explored, skip node
+            for path in explored:
+                for node_path, weight_path in path:
+                    if node == node_path:
+                        not_explored = False
+            if not_explored:   
+                new_path = path[:]
+                successor = (node, weight)
+                new_path.append(successor)
+                neighbors.append(new_path)
+        return neighbors
+
+    def cost(self, path):
+        # get cost of current path
+        cost = 0
+        for item in path:
+            #print("item: ",item)
+            cost = cost+item[1]
+        return cost
+
+    def h(self, path, explored):
+        # call succ and return min cost from list
+        successors = self.succ(path, explored)
+        min_cost = float('inf')
+        if successors:
+            for path_prime in successors:
+                path_cost = self.cost(path_prime)
+                if path_cost < min_cost:
+                    min_cost = path_cost
+        else:
+            min_cost = 0
+        return min_cost
+
+    def get_total_cost(self, path):
+        total_cost = 0
+        for node, cost in path:
+            total_cost = total_cost+cost
+        return total_cost
+
+    def dijkstra(self, start_node):
+        # lists to track
+        unexplored = []
+        frontier = []
+        explored = []
+        solution = []
+        # init frontier
+        curr_node = (start_node, 0)
+        frontier.append([curr_node])
+
+        # main loop
+        while frontier:
+            # lowest_priority -> min(current path cost + lowest future cost) of all path in frontier
+            min_cost = float('inf')
+            index_to_pop = -1
+            curr_path = None
+            for i, path in enumerate(frontier):
+                future_cost = self.cost(path) + self.h(path, explored)
+                if future_cost < min_cost:
+                    index_to_pop = i
+                    curr_path = path
+                    min_cost = future_cost 
+            # check end state
+            if index_to_pop != -1:
+                if len(curr_path) == len(self.nodes):
+                    # end state reached
+                    return (curr_path, self.get_total_cost(curr_path))
+                frontier.pop(index_to_pop)
+            # add to explored
+            explored.append(curr_path)
+            
+            # expand winning node on layer deeper
+            for paths in self.succ(curr_path, explored):
+                frontier.append(paths)
+
+        return solution
+
+    def a_star(self, start_node):
+        print(self.dijkstra(start_node))
+        #self.dijkstra(start_node)
+
+    # ethan's code end --------------------------------------------------------------------------------
+
 
 # Example usage:
 if __name__ == "__main__":
+    random.seed(42)
     # Generate graphs
-    graph_5_nodes = generate_random_graph(5)
-    graph_15_nodes = generate_random_graph(15)
-    graph_30_nodes = generate_complex_graph(30)
+    
+    graph_5_nodes = Graph()
+    graph_15_nodes = Graph()
+    graph_30_nodes = Graph()
 
+    graph_5_nodes.generate_random_graph(5)
+    graph_15_nodes.generate_random_graph(15)
+    graph_30_nodes.generate_random_graph(30)
 
+    # test data
+    graph = Graph()
+    graph.generate_random_graph(4)
+
+    #print(graph_5_nodes.edges)
+    graph.a_star('0')
