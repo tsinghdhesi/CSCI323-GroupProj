@@ -137,23 +137,29 @@ class Graph:
 
     # ethan's code start --------------------------------------------------------------------------------
 
-    def succ(self, path, explored):
+    def succ(self, path):
+        #print(f"p:{path}")
         # return successors (neighbors)
         # neighbours -> array of successors
         curr_node = path[-1][0]
         neighbors = []
+        # explore nodes in the same path (not explored, tsp modification)
         for node, weight in self.edges[curr_node].items():
-            not_explored = True
-            # if node is explored, skip node
-            for path in explored:
-                for node_path, weight_path in path:
-                    if node == node_path:
-                        not_explored = False
-            if not_explored:   
+            #print((node,weight))
+            in_path = False
+            # if node is same path, skip node
+            for n, w in path:
+                if n == node:
+                    in_path = True
+                    continue
+
+            if not in_path:   
                 new_path = path[:]
                 successor = (node, weight)
+                print("succ:",successor)
                 new_path.append(successor)
                 neighbors.append(new_path)
+        #print()
         return neighbors
 
     def cost(self, path):
@@ -166,7 +172,7 @@ class Graph:
 
     def h(self, path, explored):
         # call succ and return min cost from list
-        successors = self.succ(path, explored)
+        successors = self.succ(path)
         min_cost = float('inf')
         if successors:
             for path_prime in successors:
@@ -195,12 +201,17 @@ class Graph:
 
         # main loop
         while frontier:
+            print("f:",frontier)
+            #print()
+            # print(frontier)
+            # print("ex:",explored)
             # lowest_priority -> min(current path cost + lowest future cost) of all path in frontier
             min_cost = float('inf')
             index_to_pop = -1
             curr_path = None
             for i, path in enumerate(frontier):
                 future_cost = self.cost(path) + self.h(path, explored)
+                #print(f"path: {path}, succ: {self.succ(path, explored)}, fcost: {future_cost}")
                 if future_cost < min_cost:
                     index_to_pop = i
                     curr_path = path
@@ -215,8 +226,8 @@ class Graph:
             explored.append(curr_path)
             
             # expand winning node on layer deeper
-            for paths in self.succ(curr_path, explored):
-                frontier.append(paths)
+            for paths in self.succ(curr_path):
+                frontier.append(paths[:])
 
         return solution
 
@@ -229,7 +240,7 @@ class Graph:
 
 # Example usage:
 if __name__ == "__main__":
-    random.seed(42)
+    #random.seed(42)
     # Generate graphs
     
     graph_5_nodes = Graph()
@@ -245,4 +256,5 @@ if __name__ == "__main__":
     graph.generate_random_graph(4)
 
     #print(graph_5_nodes.edges)
+    print(graph.edges)
     graph.a_star('0')
